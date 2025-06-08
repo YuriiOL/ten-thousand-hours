@@ -5,13 +5,23 @@ app_name = 'timer'
 
 urlpatterns = [
     path(
-        'timers/',
+        '',
         views.TimerListCreateAPIView.as_view(),
         name='timer-list-create'
     ),
     path(
-        'timers/<int:pk>/',
+        '<int:pk>',
         views.TimerDetailAPIView.as_view(),
         name='timer-detail'
     ),
+    path(
+        'types',
+        views.TypeListCreateAPIView.as_view(),
+        name='timer-type-list-create'
+    ),
+    path(
+        'types/<int:pk>',
+        views.TypeDetailsAPIView.as_view(),
+        name='timer-type-update'
+    )
 ]

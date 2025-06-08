@@ -46,6 +46,19 @@ class Timer(models.Model):
     description = models.TextField(blank=True)
     current_time = models.IntegerField(default=0)
     last_session = models.IntegerField(default=0, blank=True)
+    goal = models.IntegerField(default=0)
+    timer_type = models.ManyToManyField('TimerType')
 
     def __str__(self):
         return self.title
+
+
+class TimerType(models.Model):
+    name = models.CharField(max_length=255)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+    )
+
+    def __str__(self):
+        return self.name
