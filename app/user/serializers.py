@@ -4,13 +4,16 @@ from django.contrib.auth import (
 )
 from django.utils.translation import gettext as _
 from rest_framework import serializers
+from timer.serializers import TimerSerializer
 
 
 class UserSerializer(serializers.ModelSerializer):
     """Serializer for the user object."""
+    timers = TimerSerializer(source='timer_set', many=True, read_only=True)
+
     class Meta:
         model = get_user_model()
-        fields = ['email', 'password', 'name']
+        fields = ['email', 'password', 'name', 'timers']
         extra_kwargs = {'password': {'write_only': True, 'min_length': 5}}
 
     def create(self, validated_data):
