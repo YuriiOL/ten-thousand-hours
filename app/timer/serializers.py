@@ -52,10 +52,22 @@ class TimerSerializer(serializers.ModelSerializer):
 class TimerDetailSerializer(TimerSerializer):
 
     class Meta(TimerSerializer.Meta):
-        fields = TimerSerializer.Meta.fields + ['description']
+        fields = TimerSerializer.Meta.fields + ['description', 'image']
 
 
 class TimerTypeDetailsSerializer(TimerTypeSerializer):
 
     class Meta(TimerTypeSerializer.Meta):
         fields = TimerTypeSerializer.Meta.fields
+
+
+class TimerImageSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Timer
+        fields = ['image']
+
+    def update(self, instance, validation_data):
+        instance.image = validation_data.get('image', instance.image)
+        instance.save()
+        return instance

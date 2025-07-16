@@ -10,6 +10,11 @@ urlpatterns = [
         name='timer-list-create'
     ),
     path(
+        '<int:pk>/media-upload',
+        views.TimerImageCreateAPIView.as_view(),
+        name='timer-media-upload'
+    ),
+    path(
         '<int:pk>',
         views.TimerDetailAPIView.as_view(),
         name='timer-detail'

@@ -9,6 +9,7 @@ services:
       - "8000:8000"
     volumes:
       - ./app:/app
+      - dev-static-data:/vol/web
     command: >
       sh -c "python manage.py runserver 0.0.0.0:8000"
       sh -c "python manage.py wait_for_db &&
@@ -31,3 +32,4 @@ services:
       - POSTGRES_PASSWORD=changeme
 volumes:
   dev-db-data:
+  dev-static-data:

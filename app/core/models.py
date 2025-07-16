@@ -1,3 +1,6 @@
+import uuid
+import os
+
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import (
@@ -5,6 +8,13 @@ from django.contrib.auth.models import (
     BaseUserManager,
     PermissionsMixin,
 )
+
+
+def timer_image_file_path(instance, filename):
+    ext = os.path.splitext(filename)[1]
+    filename = f'{uuid.uuid4()}.{ext}'
+
+    return os.path.join('uploads', 'timer', filename)
 
 
 class UserManager(BaseUserManager):
@@ -48,6 +58,7 @@ class Timer(models.Model):
     last_session = models.IntegerField(default=0, blank=True)
     goal = models.IntegerField(default=0)
     timer_type = models.ManyToManyField('TimerType')
+    image = models.ImageField(null=True, upload_to=timer_image_file_path)
 
     def __str__(self):
         return self.title

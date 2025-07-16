@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework import (status, mixins)
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
-
+from rest_framework.parsers import (MultiPartParser, FormParser)
 from core.models import (Timer, TimerType)
 from timer import serializers
 
@@ -126,6 +126,33 @@ class TypeListCreateAPIView(mixins.ListModelMixin, APIView):
         )
         if serializer.is_valid():
             serializer.save(user=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class TimerImageCreateAPIView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
+
+    def get_object(self, pk, user):
+        try:
+            return Timer.objects.get(pk=pk, user=user)
+        except Timer.DoesNotExist:
+            return None
+
+    @extend_schema(
+        request=serializers.TimerImageSerializer,
+        responses=serializers.TimerImageSerializer
+    )
+    def post(self, request, pk):
+        timer = self.get_object(pk, request.user)
+        serializer = serializers.TimerImageSerializer(
+            instance=timer,
+            data=request.data,
+        )
+        if serializer.is_valid():
+            serializer.save(timer=timer)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
