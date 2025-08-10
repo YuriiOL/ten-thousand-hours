@@ -1,4 +1,4 @@
-from drf_spectacular.utils import extend_schema, OpenApiResponse
+from drf_spectacular.utils import extend_schema, OpenApiResponse, OpenApiParameter
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import (status, mixins)
@@ -14,10 +14,27 @@ class TimerListCreateAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name='timer_type_name',
+                description='Filter by TimerType name.',
+                required=False,
+                type=str,
+                location=OpenApiParameter.QUERY,
+            ),
+        ],
         responses=serializers.TimerDetailSerializer(many=True)
     )
     def get(self, request):
         timers = Timer.objects.filter(user=request.user).order_by('-id')
+        type_names = request.query_params.getlist('timer_type_name')
+
+        if len(type_names) == 1 and ',' in type_names[0]:
+            type_names = [v for v in type_names[0].split(',') if v]
+
+        if type_names:
+            timers = timers.filter(timer_type__name__in=type_names)
+
         serializer = serializers.TimerDetailSerializer(timers, many=True)
         return Response(serializer.data)
 
