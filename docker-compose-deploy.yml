@@ -11,6 +11,8 @@ services:
       - ./.env
     depends_on:
       - db
+    networks:
+      - ten-thousand-hours-net
 
   db:
     image: postgres:13-alpine
@@ -19,6 +21,8 @@ services:
       - postgres-data:/var/lib/postgresql/data
     env_file:
       - ./.env
+    networks:
+      - ten-thousand-hours-net
 
   proxy:
     build:
@@ -30,7 +34,13 @@ services:
       - 80:8000
     volumes:
       - static-data:/vol/static
+    networks:
+      - ten-thousand-hours-net
 
 volumes:
   postgres-data:
   static-data:
+
+networks:
+  ten-thousand-hours-net:
+    driver: bridge
